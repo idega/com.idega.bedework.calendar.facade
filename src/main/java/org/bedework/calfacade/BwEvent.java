@@ -31,7 +31,12 @@ import org.bedework.calfacade.base.BwShareableContainedDbentity;
 import org.bedework.calfacade.base.EventEntity;
 import org.bedework.calfacade.exc.CalFacadeException;
 import org.bedework.calfacade.util.CalFacadeUtil;
+import org.hibernate.Hibernate;
+import org.hibernate.classic.Session;
 
+import com.idega.hibernate.SessionFactoryUtil;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 import edu.rpi.cmt.calendar.IcalDefs;
 import edu.rpi.cmt.calendar.PropertyIndex.PropertyInfoIndex;
 
@@ -43,6 +48,7 @@ import net.fortuna.ical4j.model.property.LastModified;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -2525,7 +2531,12 @@ public class BwEvent extends BwShareableContainedDbentity<BwEvent>
    */
   @Override
   public Set<BwContact> getContacts() {
-    return contacts;
+	  if (Hibernate.isInitialized(this.contacts)) {
+		  return contacts;
+	  }
+	  
+	  // FIXME HACK
+	  return new HashSet<BwContact>();
   }
 
   /* (non-Javadoc)
@@ -2646,7 +2657,11 @@ public class BwEvent extends BwShareableContainedDbentity<BwEvent>
   @Override
   @Dump(collectionElementName = "description")
   public Set<BwLongString> getDescriptions() {
-    return descriptions;
+	  if (Hibernate.isInitialized(this.descriptions)) {
+		  return descriptions;
+	  }
+	  
+    return new HashSet<BwLongString>();
   }
 
   /* (non-Javadoc)
